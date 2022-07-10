@@ -3,110 +3,288 @@ package io.homo_efficio.scratchpad.spring.reactor
 import io.homo_efficio.scratchpad.spring.reactor.domain.model.Item
 import io.homo_efficio.scratchpad.spring.reactor.service.ItemService
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestMethodOrder
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.MethodName::class)
 internal class ItemServiceTest {
 
     @Autowired
     private lateinit var itemService: ItemService
 
 
-    @AfterEach
-    fun afterEach() {
-        println("=================")
-        itemService.deleteAll().block()
+    @Test
+    fun `00 dummy just for embedded mongo db init`() {
+        val savedItem = initData()
     }
 
     @Test
-    fun `without cache`() {
+    fun `01 without cache multiple invocation multiple subscribe`() {
         val savedItem = initData()
 
         println("-----------------")
-        val foundItem1 = itemService.getItem(savedItem!!.id!!).block()
-        Thread.sleep(200)
+        itemService.getItem(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
 
         println("-----------------")
-        val foundItem2 = itemService.getItem(savedItem!!.id!!).block()
-        Thread.sleep(200)
+        itemService.getItem(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
 
         println("-----------------")
-        val foundItem3 = itemService.getItem(savedItem!!.id!!).block()
-    }
-
-
-    @Test
-    fun `with reactor cache`() {
-        val savedItem = initData()
-
-        println("-----------------")
-        val foundItem1 = itemService.getItemReactorCache(savedItem!!.id!!).block()
-        Thread.sleep(200)
-
-        println("-----------------")
-        val foundItem2 = itemService.getItemReactorCache(savedItem!!.id!!).block()
-        Thread.sleep(200)
-
-        println("-----------------")
-        val foundItem3 = itemService.getItemReactorCache(savedItem!!.id!!).block()
+        itemService.getItem(savedItem!!.id!!).subscribe { log.info(it.toString()) }
     }
 
     @Test
-    fun `with cacheable cache`() {
+    fun `011 without cache multiple invocation without subscribe`() {
         val savedItem = initData()
 
         println("-----------------")
-        val foundItem1 = itemService.getItemCacheableCache(savedItem!!.id!!).block()
-        Thread.sleep(200)
+        itemService.getItem(savedItem!!.id!!)
+        Thread.sleep(100)
 
         println("-----------------")
-        val foundItem2 = itemService.getItemCacheableCache(savedItem!!.id!!).block()
-        Thread.sleep(200)
+        itemService.getItem(savedItem!!.id!!)
+        Thread.sleep(100)
 
         println("-----------------")
-        val foundItem3 = itemService.getItemCacheableCache(savedItem!!.id!!).block()
+        itemService.getItem(savedItem!!.id!!)
     }
 
     @Test
-    fun `with cacheable reactor cache`() {
+    fun `012 without cache single invocation with multiple subscribe`() {
         val savedItem = initData()
 
         println("-----------------")
-        val foundItem1 = itemService.getItemCacheableReactorCache(savedItem!!.id!!).block()
-        Thread.sleep(200)
+        val foundMono = itemService.getItem(savedItem!!.id!!)
+        foundMono.subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
 
         println("-----------------")
-        val foundItem2 = itemService.getItemCacheableReactorCache(savedItem!!.id!!).block()
-        Thread.sleep(200)
+        foundMono.subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
 
         println("-----------------")
-        val foundItem3 = itemService.getItemCacheableReactorCache(savedItem!!.id!!).block()
+        foundMono.subscribe { log.info(it.toString()) }
     }
 
     @Test
-    fun `with cacheable reactor cache with TTL`() {
+    fun `02 with reactor cache multiple invocation multiple subscribe`() {
         val savedItem = initData()
 
         println("-----------------")
-        val foundItem1 = itemService.getItemCacheableReactorCacheWithTTL300ms(savedItem!!.id!!).block()
-        Thread.sleep(200)
+        itemService.getItemReactorCache(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
 
         println("-----------------")
-        val foundItem2 = itemService.getItemCacheableReactorCacheWithTTL300ms(savedItem!!.id!!).block()
-        Thread.sleep(200)
+        itemService.getItemReactorCache(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
 
         println("-----------------")
-        val foundItem3 = itemService.getItemCacheableReactorCacheWithTTL300ms(savedItem!!.id!!).block()
+        itemService.getItemReactorCache(savedItem!!.id!!).subscribe { log.info(it.toString()) }
     }
+
+    @Test
+    fun `021 with reactor cache multiple invocation without subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        itemService.getItemReactorCache(savedItem!!.id!!)
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemReactorCache(savedItem!!.id!!)
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemReactorCache(savedItem!!.id!!)
+    }
+
+    @Test
+    fun `022 with reactor cache single invocation with multiple subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        val foundMono = itemService.getItemReactorCache(savedItem!!.id!!)
+        foundMono.subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        foundMono.subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        foundMono.subscribe { log.info(it.toString()) }
+    }
+
+    @Test
+    fun `03 with cacheable cache multiple invocation multiple subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        itemService.getItemCacheableCache(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableCache(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableCache(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+    }
+
+    @Test
+    fun `031 with cacheable cache multiple invocation without subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        itemService.getItemCacheableCache(savedItem!!.id!!)
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableCache(savedItem!!.id!!)
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableCache(savedItem!!.id!!)
+    }
+
+    @Test
+    fun `032 with cacheable cache single invocation with multiple subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        val foundMono = itemService.getItemCacheableCache(savedItem!!.id!!)
+        foundMono.subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        foundMono.subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        foundMono.subscribe { log.info(it.toString()) }
+    }
+
+    @Test
+    fun `04 with cacheable reactor cache multiple invocation multiple subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCache(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCache(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCache(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+    }
+
+    @Test
+    fun `041 with cacheable reactor cache multiple invocation without subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCache(savedItem!!.id!!)
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCache(savedItem!!.id!!)
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCache(savedItem!!.id!!)
+    }
+
+    @Test
+    fun `042 with cacheable reactor cache single invocation with multiple subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        val foundMono = itemService.getItemCacheableReactorCache(savedItem!!.id!!)
+        foundMono.subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        foundMono.subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        foundMono.subscribe { log.info(it.toString()) }
+    }
+
+    @Test
+    fun `05 with cacheable reactor cache with TTL multiple invocation multiple subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCacheWithTTL150ms(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCacheWithTTL150ms(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCacheWithTTL150ms(savedItem!!.id!!).subscribe { log.info(it.toString()) }
+    }
+
+    @Test
+    fun `051 with cacheable reactor cache with TTL multiple invocation without subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCacheWithTTL150ms(savedItem!!.id!!)
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCacheWithTTL150ms(savedItem!!.id!!)
+        Thread.sleep(100)
+
+        println("-----------------")
+        itemService.getItemCacheableReactorCacheWithTTL150ms(savedItem!!.id!!)
+    }
+
+    @Test
+    fun `052 with cacheable reactor cache with TTL single invocation with multiple subscribe`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        val foundMono = itemService.getItemCacheableReactorCacheWithTTL150ms(savedItem!!.id!!)
+        foundMono.subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        foundMono.subscribe { log.info(it.toString()) }
+        Thread.sleep(100)
+
+        println("-----------------")
+        foundMono.subscribe { log.info(it.toString()) }
+    }
+
     private fun initData(): Item? {
         println("=================")
         val savedItem = itemService.save(
             Item(id = null, name = "name01", price = 1)
         ).block()
-        Thread.sleep(200)
+        Thread.sleep(100)
         return savedItem
     }
+
+    @AfterEach
+    fun afterEach() {
+        Thread.sleep(300)
+        println("=================")
+        itemService.deleteAll().block()
+    }
+
+
+    private val log = LoggerFactory.getLogger(javaClass)
 }

@@ -35,8 +35,8 @@ class ItemService(
     }
 
     @Cacheable("items")
-    fun getItemCacheableReactorCacheWithTTL300ms(id: String): Mono<Item> {
-        return itemRepository.findById(id).cache(Duration.ofMillis(300))
+    fun getItemCacheableReactorCacheWithTTL150ms(id: String): Mono<Item> {
+        return itemRepository.findById(id).cache(Duration.ofMillis(150))
     }
 
     fun deleteAll(): Mono<Void> {
