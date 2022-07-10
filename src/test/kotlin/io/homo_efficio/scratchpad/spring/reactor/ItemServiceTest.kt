@@ -1,6 +1,7 @@
 package io.homo_efficio.scratchpad.spring.reactor
 
 import io.homo_efficio.scratchpad.spring.reactor.domain.model.Item
+import io.homo_efficio.scratchpad.spring.reactor.service.ItemService
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired

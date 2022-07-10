@@ -1,4 +1,4 @@
-package io.homo_efficio.scratchpad.spring.reactor
+package io.homo_efficio.scratchpad.spring.reactor.service
 
 import io.homo_efficio.scratchpad.spring.reactor.domain.model.Item
 import io.homo_efficio.scratchpad.spring.reactor.domain.repository.ItemRepository
