@@ -27,11 +27,11 @@ internal class ItemServiceTest {
 
         println("-----------------")
         val foundItem1 = itemService.getItem(savedItem!!.id!!).block()
-        Thread.sleep(500)
+        Thread.sleep(200)
 
         println("-----------------")
         val foundItem2 = itemService.getItem(savedItem!!.id!!).block()
-        Thread.sleep(500)
+        Thread.sleep(200)
 
         println("-----------------")
         val foundItem3 = itemService.getItem(savedItem!!.id!!).block()
@@ -44,11 +44,11 @@ internal class ItemServiceTest {
 
         println("-----------------")
         val foundItem1 = itemService.getItemReactorCache(savedItem!!.id!!).block()
-        Thread.sleep(500)
+        Thread.sleep(200)
 
         println("-----------------")
         val foundItem2 = itemService.getItemReactorCache(savedItem!!.id!!).block()
-        Thread.sleep(500)
+        Thread.sleep(200)
 
         println("-----------------")
         val foundItem3 = itemService.getItemReactorCache(savedItem!!.id!!).block()
@@ -60,11 +60,11 @@ internal class ItemServiceTest {
 
         println("-----------------")
         val foundItem1 = itemService.getItemCacheableCache(savedItem!!.id!!).block()
-        Thread.sleep(500)
+        Thread.sleep(200)
 
         println("-----------------")
         val foundItem2 = itemService.getItemCacheableCache(savedItem!!.id!!).block()
-        Thread.sleep(500)
+        Thread.sleep(200)
 
         println("-----------------")
         val foundItem3 = itemService.getItemCacheableCache(savedItem!!.id!!).block()
@@ -76,21 +76,37 @@ internal class ItemServiceTest {
 
         println("-----------------")
         val foundItem1 = itemService.getItemCacheableReactorCache(savedItem!!.id!!).block()
-        Thread.sleep(500)
+        Thread.sleep(200)
 
         println("-----------------")
         val foundItem2 = itemService.getItemCacheableReactorCache(savedItem!!.id!!).block()
-        Thread.sleep(500)
+        Thread.sleep(200)
 
         println("-----------------")
         val foundItem3 = itemService.getItemCacheableReactorCache(savedItem!!.id!!).block()
+    }
+
+    @Test
+    fun `with cacheable reactor cache with TTL`() {
+        val savedItem = initData()
+
+        println("-----------------")
+        val foundItem1 = itemService.getItemCacheableReactorCacheWithTTL300ms(savedItem!!.id!!).block()
+        Thread.sleep(200)
+
+        println("-----------------")
+        val foundItem2 = itemService.getItemCacheableReactorCacheWithTTL300ms(savedItem!!.id!!).block()
+        Thread.sleep(200)
+
+        println("-----------------")
+        val foundItem3 = itemService.getItemCacheableReactorCacheWithTTL300ms(savedItem!!.id!!).block()
     }
     private fun initData(): Item? {
         println("=================")
         val savedItem = itemService.save(
             Item(id = null, name = "name01", price = 1)
         ).block()
-        Thread.sleep(500)
+        Thread.sleep(200)
         return savedItem
     }
 }

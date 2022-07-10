@@ -5,6 +5,7 @@ import io.homo_efficio.scratchpad.spring.reactor.domain.repository.ItemRepositor
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
+import java.time.Duration
 
 @Service
 class ItemService(
@@ -31,6 +32,11 @@ class ItemService(
     @Cacheable("items")
     fun getItemCacheableReactorCache(id: String): Mono<Item> {
         return itemRepository.findById(id).cache()
+    }
+
+    @Cacheable("items")
+    fun getItemCacheableReactorCacheWithTTL300ms(id: String): Mono<Item> {
+        return itemRepository.findById(id).cache(Duration.ofMillis(300))
     }
 
     fun deleteAll(): Mono<Void> {
