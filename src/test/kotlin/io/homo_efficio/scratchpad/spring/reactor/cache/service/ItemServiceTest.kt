@@ -1,7 +1,6 @@
-package io.homo_efficio.scratchpad.spring.reactor
+package io.homo_efficio.scratchpad.spring.reactor.cache.service
 
-import io.homo_efficio.scratchpad.spring.reactor.domain.model.Item
-import io.homo_efficio.scratchpad.spring.reactor.service.ItemService
+import io.homo_efficio.scratchpad.spring.reactor.cache.domain.model.Item
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.MethodOrderer
 import org.junit.jupiter.api.Test
