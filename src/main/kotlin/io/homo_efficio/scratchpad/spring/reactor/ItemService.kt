@@ -2,6 +2,7 @@ package io.homo_efficio.scratchpad.spring.reactor
 
 import io.homo_efficio.scratchpad.spring.reactor.domain.model.Item
 import io.homo_efficio.scratchpad.spring.reactor.domain.repository.ItemRepository
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 
@@ -16,5 +17,23 @@ class ItemService(
 
     fun getItem(id: String): Mono<Item> {
         return itemRepository.findById(id)
+    }
+
+    fun getItemReactorCache(id: String): Mono<Item> {
+        return itemRepository.findById(id).cache()
+    }
+
+    @Cacheable("items")
+    fun getItemCacheableCache(id: String): Mono<Item> {
+        return itemRepository.findById(id)
+    }
+
+    @Cacheable("items")
+    fun getItemCacheableReactorCache(id: String): Mono<Item> {
+        return itemRepository.findById(id).cache()
+    }
+
+    fun deleteAll(): Mono<Void> {
+        return itemRepository.deleteAll()
     }
 }
